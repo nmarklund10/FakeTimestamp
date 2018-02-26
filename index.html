@@ -1,0 +1,80 @@
+<style>
+@font-face {
+    font-family: ClockFont;
+    src: url('clockFont.ttf');
+}
+#fileBtn {
+	padding: 3px;
+	background-color: lightgray;
+	border-style: solid;
+}
+#fileBtn:hover {
+	background-color: #b8bdc4;
+	cursor: pointer;
+}
+#container {
+    position: relative;
+    text-align: center;
+    color: white;
+    display: inline-block;
+}
+#text {
+    font-family: ClockFont;
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 305px
+}
+</style>
+<script src="html2canvas.js"></script>
+<script src="polyfill.js"></script>
+<script>
+	function hide(id) {
+		document.getElementById(id).style.display = 'none';
+	}
+	function getInfo() {
+		var txt = document.getElementById("timeStamp").value
+		if (txt == "") {
+			alert("Please enter a timeStamp value.")
+			return;
+		}
+		var img = document.getElementById("fileUpload").files;
+		if (img.length < 1) {
+			alert("Please import an image.")
+			return;
+		}
+		document.getElementById("text").innerText = txt;
+	    img = img[0]
+	    var reader  = new FileReader();
+
+		reader.addEventListener("load", function () {
+			document.getElementById("screenshot").src = reader.result;
+			document.getElementById("screenshot").addEventListener("load", showPhoto);
+		});
+		reader.readAsDataURL(img);
+		hide("form");
+	}
+	function showPhoto() {
+		html2canvas(document.getElementById('container')).then(function(canvas) {
+		    document.getElementById('container').appendChild(canvas);
+		    hide("screenshot");
+		    hide("text");
+		});
+	}
+</script>
+<html>
+<header><title>FakeTimestamp</title></header>
+<body>
+	<div id="form">
+		<input id="timeStamp" type="text" placeholder="Enter Timestamp">
+		<label for="fileUpload" id="fileBtn">Upload Screenshot</label>
+		<input id="fileUpload" style="display:none" accept="image/*" type="file">
+		<button onclick="getInfo()">Generate Fake Photo</button>
+	</div>
+	<div id="container">
+	  <img id="screenshot">
+	  <div id="text"></div>
+	</div>
+</body>
+</html>
